@@ -1,0 +1,53 @@
+bios B (silent)
+-----
+General
+Version	95.02.3C.40.B8
+Build Date	2023-03-06
+Message	PG139 SKU 332 VGA BIOS 
+	MSINV510MH.2X0
+Board Id	GPU Board
+
+Power Limit
+Minimum	150.0 W
+Default	450.0 W
+Maximum	480.0 W
+Adjustment Range	-67% to +7%
+
+Memory Support
+Entry 1	GDDR6X
+	Micron
+	16 Gbit x16
+Entry 2	GDDR6X
+	Micron
+	16 Gbit x16
+
+Thermal Limits
+Rated	84.0°C
+Maximum	88.0°C
+
+Connectors
+Connector 1	DisplayPort
+Connector 2	DisplayPort
+Connector 3	DisplayPort
+Connector 4	HDMI
+
+Build GUID            : AF156DC301D44152BC6172C512B19073
+Build Number          : 32193434
+IFR Subsystem ID      : 1462-5103
+Subsystem Vendor ID   : 0x1462
+Subsystem ID          : 0x5103
+Version               : 95.02.3C.40.B8
+Image Hash            : N/A
+Hierarchy ID          : Normal Board
+Build Date            : 12/13/22
+Modification Date     : 03/06/23
+UEFI Version          : 0x7000B ( x64 )
+UEFI Variant ID       : 0x000000000000000B ( Unknown )
+UEFI Signer(s)        : Microsoft Corporation UEFI CA 2011
+XUSB-FW Version ID    : N/A
+XUSB-FW Build Time    : N/A
+InfoROM Version       : G002.0000.00.03
+InfoROM Backup        : Present
+License Placeholder   : Present
+GPU Mode              : N/A
+CEC OTA-signed Blob   : Not Present
