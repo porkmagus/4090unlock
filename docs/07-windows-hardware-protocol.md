@@ -165,6 +165,18 @@ in §2. That is exactly how the GOP driver reaches `0x0082xxxx`, and how the
 public UEFI unlockers read the same words. Reads only; no `Mem.Write`, no
 config-space writes.
 
+**You may not need to build anything.** Two ready-made paths already exist:
+
+| Path | What it is | Caveat |
+|---|---|---|
+| UEFI Shell `mm <addr> -w 4 -MMIO` | built into the EDK2 shell (`ShellPkg/Library/UefiShellDebug1CommandsLib/Mm.c`) | on a normal boot the shell is not running pre-driver; and `mm` can write, so use it read-only (omit the value) |
+| `mongoled`'s `ada-register-probe` (public, GPL-2.0, ~250 lines, one file) | out-of-tree read-only Linux module with a HOWTO; already used by several people on AD106/AD103/AD102 (`docs/10`) | it **enables PCI memory decoding** in config space if firmware left it off — a config write. Our `capture_linux.py` refuses to do that and asks for the UEFI path instead. Read the source before running either. |
+
+The tool below is ours: it refuses config writes, labels the stage, and emits a
+JSON that `decode_fingerprint.py` and the gate-2 check consume directly. Use it
+when you want that specific evidence format; use the existing tools when you
+just want the numbers.
+
 **What it must do (acceptance for the tool itself):**
 
 1. Print the device id and subsystem id from PCI config, and abort on anything

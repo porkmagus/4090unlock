@@ -70,9 +70,11 @@ to override. `FEAT_READOUT_1` records what the SM units are actually doing. A
 card can hold `0x88888888` in SS0 and still report a reduced readout if the
 override is masked or the unit is in reset.
 
-**Cross-check (recommended):** `FECS_FEAT_READOUT_1` (`0x00409668`) should agree
-with the SM-side readout. If they disagree, stop and diagnose; one of them is
-stale.
+**Cross-check:** take `FEAT_READOUT_1` twice, 100 ms apart, and require both reads
+to be identical — that catches a stale or torn read. Do **not** use the FECS
+mirror (`0x00409664` / `0x00409668`) as a gate: on every Ampere part probed in
+public (`docs/10` §5) that block reads `0xbadf5040`, the inaccessible marker, and
+it carries no usable value.
 
 ---
 

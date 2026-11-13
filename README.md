@@ -19,6 +19,7 @@ was flashed or written to a GPU.
 | [docs/07-windows-hardware-protocol.md](docs/07-windows-hardware-protocol.md) | **New:** how to read the factory register state safely (and why Windows can't) |
 | [docs/08-acceptance-and-benchmarks.md](docs/08-acceptance-and-benchmarks.md) | **New:** three-gate acceptance system and the benchmark matrix |
 | [docs/09-persistence-decision.md](docs/09-persistence-decision.md) | **New:** GO / NO-GO on every persistence route |
+| [docs/10-public-field-data.md](docs/10-public-field-data.md) | **New:** what other people already measured — 15 Ampere cards, cold Ada probes, the vendor RM getter |
 
 Background and earlier tooling work:
 
@@ -47,10 +48,12 @@ Background and earlier tooling work:
    the plaintext DMEM differs in exactly 33 bytes (PCI device id plus one 32-byte
    per-SKU binding value). The GOP EFI driver is byte-identical too. Only the
    display/memory firmware (LS_UDE) differs, as it must.
-4. **So the difference is in hardware or host software.** Per-SKU fuse/strap
-   data remains the best-supported origin; host-side GSP-RM is the only
-   alternative left, and a cold pre-driver capture separates them. One read-only
-   measurement on a professional AD102 decides it — `docs/06` §7.
+4. **So the difference is in hardware.** Two software alternatives are now
+   excluded: the ROM firmware is bit-identical, and cold Ada cards with no
+   driver bound already show the reduced readout (`FEAT_READOUT_1 = 0x00410080`),
+   which rules out host-side GSP-RM. On Ampere this was measured directly across
+   15 cards: speed-select fuses `1` on every consumer GeForce, `0` on every
+   professional/datacenter part. See `docs/10`.
 5. **Persistence: no on-card route survives review.** A genuine on-card default
    would require a writable rate field (none exists) or a modified signed
    firmware (breaks SEC2). The ceiling is a host-dependent automatic pre-OS
