@@ -1,0 +1,549 @@
+{
+  "register_constants": {
+    "0x823804": "FEAT_OVR_PLM",
+    "0x823818": "FEAT_READOUT_1",
+    "0x82381c": "SS0",
+    "0x823820": "SS1",
+    "0x823814": "FEAT_READOUT_0",
+    "0x82059c": "FUSE_SS_FFMA",
+    "0x8207d4": "FUSE_SS_FMLA16",
+    "0x8207d8": "FUSE_SS_FMLA32",
+    "0x8207dc": "FUSE_SS_IMLA0",
+    "0x8207e0": "FUSE_SS_IMLA1",
+    "0x8207e4": "FUSE_SS_IMLA2",
+    "0x8207e8": "FUSE_SS_IMLA3",
+    "0x8207ec": "FUSE_SS_IMLA4",
+    "0x8200fc": "FUSE_SS_PLM",
+    "0x82038c": "SECURE_FEAT_OVR_QUADRO_WR_SECURE"
+  },
+  "dumps": {
+    "A": {
+      "path": "pc_extracted_files/bios_A_factory.rom",
+      "size": 2048000,
+      "sha256": "a4aade5a271fa793372da5f1196864b8918805465ba6cba31b0d09dc47619eae",
+      "rom_start": 37888,
+      "rom_bytes": 2010112,
+      "bit_relocation_adjust": 85504,
+      "chain_error": null,
+      "images": [
+        {
+          "start": 0,
+          "length": 64512,
+          "end": 64512,
+          "code_type": 0,
+          "last": false,
+          "signature": "0xAA55",
+          "data_signature": "PCIR",
+          "sha256": "b0bd8ef29f969add07cae879382697bd612aab7c616d2cc22db93aee96429076",
+          "npde": {
+            "offset": 400,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 126,
+            "last_override": false
+          }
+        },
+        {
+          "start": 64512,
+          "length": 85504,
+          "end": 150016,
+          "code_type": 3,
+          "last": false,
+          "signature": "0xAA55",
+          "data_signature": "PCIR",
+          "sha256": "9816a440ab0b4e9e14f19f7ea331521c1713c51836d2b1618b12c00580070007",
+          "npde": {
+            "offset": 64576,
+            "revision": "1.0",
+            "header_len": 16,
+            "subimage_blocks": 167,
+            "last_override": false
+          }
+        },
+        {
+          "start": 150016,
+          "length": 24576,
+          "end": 174592,
+          "code_type": 224,
+          "last": false,
+          "signature": "0x4E56",
+          "data_signature": "NPDS",
+          "sha256": "6d3bc6899f84e2b33047435294f21c53ba5786d4513aaec03c96a1c497ae14f3",
+          "npde": {
+            "offset": 150400,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 48,
+            "last_override": false
+          }
+        },
+        {
+          "start": 174592,
+          "length": 451584,
+          "end": 626176,
+          "code_type": 224,
+          "last": true,
+          "signature": "0x4E56",
+          "data_signature": "NPDS",
+          "sha256": "0a11e7133f48eb8256c7a39525938a077c4a5cbca4f60e5530f204fa44d2162f",
+          "npde": {
+            "offset": 174656,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 882,
+            "last_override": true
+          }
+        }
+      ],
+      "copy1_sha256": "5c77fa2d939901248291cad783a29196a2e2c1bfcd0fb1cda35bc75b646ffc77",
+      "copy2_sha256": "a3ee843a9e958a3c26096c96335148b9f9c70101cfc4948ea4d5194733c25442",
+      "copy1_has_zeros_past_chain": 5237,
+      "legacy_x86_sha256": "b0bd8ef29f969add07cae879382697bd612aab7c616d2cc22db93aee96429076",
+      "legacy_x86_register_hits": {},
+      "ucodes": {
+        "0x01": {
+          "desc_offset": 174676,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 39720,
+          "dmem_size": 1540,
+          "image_sha256": "073bbb6b28be1726a43f876cca24babd5a2060aa9e2d22d03dd45bd2f71cd2e8",
+          "image_sha256_dma": "7a2334f938ff6ca1058e634312fd29638c7a4a4b6bd6a999675f756ca6ca2f46"
+        },
+        "0x07": {
+          "desc_offset": 349960,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 64768,
+          "dmem_size": 108,
+          "image_sha256": "b7e2cfc8336b9608bd3b59990c8ef43a7f6e81ba08e19916b1c56aebb2c07eb3",
+          "image_sha256_dma": "f21f236677256a14c8c50849fbd201b8350372979c96e914b7d28defbd319792"
+        },
+        "0x08": {
+          "desc_offset": 467788,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 62224,
+          "dmem_size": 35920,
+          "image_sha256": "8cf5fcaeda26fadddc64ca508621943c5a70b9d9eb6dff966f91fdcb1c9aac8a",
+          "image_sha256_dma": "4c4435ea2524c4e3150c0249e189d65cb0d8eda19bb78900a96a909d9999aff7"
+        },
+        "0x45": {
+          "desc_offset": 215984,
+          "format": "V3",
+          "engine_mask": 1024,
+          "ucode_id": 9,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 62720,
+          "dmem_size": 3456,
+          "image_sha256": "f013f9a50e69a183d3860ed3f1f66af63832cae5d82fcb345ffdae7031d69eac",
+          "image_sha256_dma": "9987f038fd2a892556b747d86a483e36a1d384e949e469a2b7208739294b20c5"
+        },
+        "0x85": {
+          "desc_offset": 282972,
+          "format": "V3",
+          "engine_mask": 1024,
+          "ucode_id": 9,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 62720,
+          "dmem_size": 3456,
+          "image_sha256": "a9dbe61166d858bec35b83837cf4652730b0125c79b65b17fd1824c80cec0103",
+          "image_sha256_dma": "6bbcb2fdffdd90bf548611242c0890300c0c45f3e65db12dff9d0a30abafd06e"
+        },
+        "0x49": {
+          "desc_offset": 414884,
+          "format": "V3",
+          "engine_mask": 1,
+          "ucode_id": 10,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 22528,
+          "dmem_size": 3112,
+          "image_sha256": "91aa20e0c2e71440b34210fd9a4b8f0a0ea0525a037eff87818175c4845ef2e1",
+          "image_sha256_dma": "278addfced63817150d0923e14ec6878f40abab1bad4437bc603b4b265d48760"
+        },
+        "0x89": {
+          "desc_offset": 441336,
+          "format": "V3",
+          "engine_mask": 1,
+          "ucode_id": 10,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 22528,
+          "dmem_size": 3112,
+          "image_sha256": "bbea68377775369f33c2b84856a729d25c0e2656c577e648edee3f26e63994eb",
+          "image_sha256_dma": "890111ed687d75602856bc77bc2912493cab795bdfd18c7b184a2ef9e9211194"
+        }
+      },
+      "ucode_table_offset": 625880,
+      "efi_pe_sha256": "47a1f08b2b1294ee83896246e60ddadc7ec1b0f5e0f872477ca4378b4c8a89bd",
+      "efi_pe_bytes": 164144,
+      "efi_pe_register_hits": {}
+    },
+    "B": {
+      "path": "pc_extracted_files/bios_B_factory.rom",
+      "size": 2048000,
+      "sha256": "15771e9243ae9ae673f2d662f610176cfabae4ccf457c70578f16b0ac26ea68f",
+      "rom_start": 37888,
+      "rom_bytes": 2010112,
+      "bit_relocation_adjust": 85504,
+      "chain_error": null,
+      "images": [
+        {
+          "start": 0,
+          "length": 64512,
+          "end": 64512,
+          "code_type": 0,
+          "last": false,
+          "signature": "0xAA55",
+          "data_signature": "PCIR",
+          "sha256": "754a6b18a50ef21a339e54d30914721b40549cef70d4b91e7a2157843d6c1cac",
+          "npde": {
+            "offset": 400,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 126,
+            "last_override": false
+          }
+        },
+        {
+          "start": 64512,
+          "length": 85504,
+          "end": 150016,
+          "code_type": 3,
+          "last": false,
+          "signature": "0xAA55",
+          "data_signature": "PCIR",
+          "sha256": "9816a440ab0b4e9e14f19f7ea331521c1713c51836d2b1618b12c00580070007",
+          "npde": {
+            "offset": 64576,
+            "revision": "1.0",
+            "header_len": 16,
+            "subimage_blocks": 167,
+            "last_override": false
+          }
+        },
+        {
+          "start": 150016,
+          "length": 24576,
+          "end": 174592,
+          "code_type": 224,
+          "last": false,
+          "signature": "0x4E56",
+          "data_signature": "NPDS",
+          "sha256": "6d3bc6899f84e2b33047435294f21c53ba5786d4513aaec03c96a1c497ae14f3",
+          "npde": {
+            "offset": 150400,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 48,
+            "last_override": false
+          }
+        },
+        {
+          "start": 174592,
+          "length": 451584,
+          "end": 626176,
+          "code_type": 224,
+          "last": true,
+          "signature": "0x4E56",
+          "data_signature": "NPDS",
+          "sha256": "0a0335d4219fe69dbe4ee179636bbe85317c76c706cd43efa9507172c94d1fa7",
+          "npde": {
+            "offset": 174656,
+            "revision": "1.1",
+            "header_len": 20,
+            "subimage_blocks": 882,
+            "last_override": true
+          }
+        }
+      ],
+      "copy1_sha256": "557fceb7660e54def4063a85b07cc6d65f9e4ac7d66db4a0b1ec795b9e680e23",
+      "copy2_sha256": "9682097be05776b0627e7a0392d96e556ce4b5e9c777ea21ee4c1320f742ec49",
+      "copy1_has_zeros_past_chain": 5235,
+      "legacy_x86_sha256": "754a6b18a50ef21a339e54d30914721b40549cef70d4b91e7a2157843d6c1cac",
+      "legacy_x86_register_hits": {},
+      "ucodes": {
+        "0x01": {
+          "desc_offset": 174676,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 39720,
+          "dmem_size": 1540,
+          "image_sha256": "073bbb6b28be1726a43f876cca24babd5a2060aa9e2d22d03dd45bd2f71cd2e8",
+          "image_sha256_dma": "7a2334f938ff6ca1058e634312fd29638c7a4a4b6bd6a999675f756ca6ca2f46"
+        },
+        "0x07": {
+          "desc_offset": 349960,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 64768,
+          "dmem_size": 108,
+          "image_sha256": "b7e2cfc8336b9608bd3b59990c8ef43a7f6e81ba08e19916b1c56aebb2c07eb3",
+          "image_sha256_dma": "f21f236677256a14c8c50849fbd201b8350372979c96e914b7d28defbd319792"
+        },
+        "0x08": {
+          "desc_offset": 467788,
+          "format": "legacy",
+          "engine_mask": null,
+          "ucode_id": null,
+          "sig_count": null,
+          "sig_versions": null,
+          "imem_size": 62224,
+          "dmem_size": 35920,
+          "image_sha256": "8cf5fcaeda26fadddc64ca508621943c5a70b9d9eb6dff966f91fdcb1c9aac8a",
+          "image_sha256_dma": "4c4435ea2524c4e3150c0249e189d65cb0d8eda19bb78900a96a909d9999aff7"
+        },
+        "0x45": {
+          "desc_offset": 215984,
+          "format": "V3",
+          "engine_mask": 1024,
+          "ucode_id": 9,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 62720,
+          "dmem_size": 3456,
+          "image_sha256": "f013f9a50e69a183d3860ed3f1f66af63832cae5d82fcb345ffdae7031d69eac",
+          "image_sha256_dma": "9987f038fd2a892556b747d86a483e36a1d384e949e469a2b7208739294b20c5"
+        },
+        "0x85": {
+          "desc_offset": 282972,
+          "format": "V3",
+          "engine_mask": 1024,
+          "ucode_id": 9,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 62720,
+          "dmem_size": 3456,
+          "image_sha256": "a9dbe61166d858bec35b83837cf4652730b0125c79b65b17fd1824c80cec0103",
+          "image_sha256_dma": "6bbcb2fdffdd90bf548611242c0890300c0c45f3e65db12dff9d0a30abafd06e"
+        },
+        "0x49": {
+          "desc_offset": 414884,
+          "format": "V3",
+          "engine_mask": 1,
+          "ucode_id": 10,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 22528,
+          "dmem_size": 3112,
+          "image_sha256": "91aa20e0c2e71440b34210fd9a4b8f0a0ea0525a037eff87818175c4845ef2e1",
+          "image_sha256_dma": "278addfced63817150d0923e14ec6878f40abab1bad4437bc603b4b265d48760"
+        },
+        "0x89": {
+          "desc_offset": 441336,
+          "format": "V3",
+          "engine_mask": 1,
+          "ucode_id": 10,
+          "sig_count": 2,
+          "sig_versions": 3,
+          "imem_size": 22528,
+          "dmem_size": 3112,
+          "image_sha256": "bbea68377775369f33c2b84856a729d25c0e2656c577e648edee3f26e63994eb",
+          "image_sha256_dma": "890111ed687d75602856bc77bc2912493cab795bdfd18c7b184a2ef9e9211194"
+        }
+      },
+      "ucode_table_offset": 625880,
+      "efi_pe_sha256": "47a1f08b2b1294ee83896246e60ddadc7ec1b0f5e0f872477ca4378b4c8a89bd",
+      "efi_pe_bytes": 164144,
+      "efi_pe_register_hits": {}
+    }
+  },
+  "profile_delta": {
+    "active_copy_differing_bytes": 1448,
+    "active_copy_ranges": [
+      [
+        141,
+        141,
+        1
+      ],
+      [
+        206,
+        206,
+        1
+      ],
+      [
+        590,
+        590,
+        1
+      ],
+      [
+        1080,
+        1080,
+        1
+      ],
+      [
+        1148,
+        1163,
+        16
+      ],
+      [
+        64511,
+        64511,
+        1
+      ],
+      [
+        567423,
+        567427,
+        5
+      ],
+      [
+        567434,
+        567434,
+        1
+      ],
+      [
+        616727,
+        616727,
+        1
+      ],
+      [
+        616735,
+        616737,
+        3
+      ],
+      [
+        616778,
+        616778,
+        1
+      ],
+      [
+        616786,
+        616788,
+        3
+      ],
+      [
+        616829,
+        616829,
+        1
+      ],
+      [
+        616838,
+        616839,
+        2
+      ],
+      [
+        616880,
+        616880,
+        1
+      ],
+      [
+        616889,
+        616890,
+        2
+      ],
+      [
+        626175,
+        626175,
+        1
+      ],
+      [
+        900649,
+        900649,
+        1
+      ],
+      [
+        900675,
+        900675,
+        1
+      ],
+      [
+        910184,
+        910215,
+        32
+      ],
+      [
+        910340,
+        910371,
+        32
+      ],
+      [
+        910496,
+        910527,
+        32
+      ],
+      [
+        910548,
+        910579,
+        32
+      ],
+      [
+        911900,
+        911931,
+        32
+      ],
+      [
+        912784,
+        912815,
+        32
+      ],
+      [
+        914292,
+        914323,
+        32
+      ],
+      [
+        915852,
+        915883,
+        32
+      ],
+      [
+        916040,
+        916195,
+        156
+      ],
+      [
+        916197,
+        916390,
+        194
+      ],
+      [
+        916392,
+        916423,
+        32
+      ],
+      [
+        916452,
+        916802,
+        351
+      ],
+      [
+        916804,
+        916835,
+        32
+      ],
+      [
+        916864,
+        917067,
+        204
+      ],
+      [
+        917069,
+        917247,
+        179
+      ]
+    ],
+    "backup_copy_differing_bytes": 102
+  },
+  "within_dump_copy_delta": {
+    "differing_bytes": 33056,
+    "first_offset": 879616
+  }
+}
