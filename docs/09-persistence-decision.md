@@ -106,7 +106,7 @@ Never the real GPU as a firmware test target.**
 | If this were shown | Then |
 |---|---|
 | A professional AD102 reads `FUSE_SS_FMLA32 = 0` while the 4090 reads `1` | Fuse origin confirmed; on-card persistence is definitively closed and the GO route is the only option |
-| A professional AD102 reads the same fuses as the 4090 but still runs full rate | Fuse origin refuted; authenticated firmware or a strap sets the rate, and the firmware track reopens (with SEC2 as the wall) |
+| A professional AD102 reads the same fuses as the 4090 but still runs full rate | Fuse origin refuted; a strap, the GPU's own boot ROM or host-side software (GSP-RM) sets the rate. ROM firmware is already excluded (`docs/06` §4), so the VBIOS track stays closed. |
 | The VBIOS profile switch changes any `0x8238xx` readout at S0 | The VBIOS *does* seed part of the state; the NO-GO on modified tables must be revisited |
 | A signed, vendor-supplied mechanism to set the rate were found | everything changes; none is known |
 | OVMF dispatches a synthetic option-ROM driver **and** a signing path exists | the portable (class B) route becomes worth prototyping on a sacrificial card |

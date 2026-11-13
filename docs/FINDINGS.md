@@ -1,6 +1,12 @@
 # RTX 4090 Tensor Unlock & VBIOS — Comprehensive Findings
 
 **Status:** static analysis complete; hardware verification pending.
+
+> **Stage 7 update:** `docs/05`–`docs/09` supersede parts of this document. In
+> particular the EFI image is now decompressed and analysed, the ucode entries
+> are classified, the profile delta is mapped, and the FWSEC firmware is proven
+> bit-identical to a professional AD102's. The conclusions below are narrowed,
+> not overturned.
 **Scope:** two on-card VBIOS dumps (MSI RTX 4090, subsystem `1462:5103`), the
 public unlock implementations, and the tooling required to analyze both.
 **Nothing here was flashed, written to a GPU, or booted.** All claims are tied to

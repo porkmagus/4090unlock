@@ -41,10 +41,17 @@ Background and earlier tooling work:
    the 4090 reaches the professional per-clock rate after two host register
    writes. Every FP32-accumulate tensor path on the 4090 is exactly half the
    FP16-accumulate rate; on the professional card they are equal.
-3. **Fuse-programmed defaults remain the best-supported origin**, with
-   authenticated firmware not excluded (FWSEC is encrypted). One read-only
-   measurement on a professional AD102 decides it — see `docs/06` §7.
-4. **Persistence: no on-card route survives review.** A genuine on-card default
+3. **ROM firmware is not the differentiator — verified.** A second dump now in
+   the repo (`6000-vbios/254385.rom`, RTX 6000 Ada) carries the **same FWSEC
+   firmware bytes** as the 4090: the signed, encrypted IMEM is bit-identical and
+   the plaintext DMEM differs in exactly 33 bytes (PCI device id plus one 32-byte
+   per-SKU binding value). The GOP EFI driver is byte-identical too. Only the
+   display/memory firmware (LS_UDE) differs, as it must.
+4. **So the difference is in hardware or host software.** Per-SKU fuse/strap
+   data remains the best-supported origin; host-side GSP-RM is the only
+   alternative left, and a cold pre-driver capture separates them. One read-only
+   measurement on a professional AD102 decides it — `docs/06` §7.
+5. **Persistence: no on-card route survives review.** A genuine on-card default
    would require a writable rate field (none exists) or a modified signed
    firmware (breaks SEC2). The ceiling is a host-dependent automatic pre-OS
    replay, which public projects already demonstrate.
@@ -64,6 +71,11 @@ copies, `0x2AC00` tail. The active copies differ by 1,448 bytes (34 ranges); the
 backup copies by 102 bytes. FWSEC and the GOP driver are byte-identical across
 profiles.
 
+A third sample — `6000-vbios/254385.rom`, an RTX 6000 Ada (`10DE:26B1`,
+subsystem `10DE:16A1`, VBIOS `95.02.59.00.09`, SHA-256 `394677dc316e6259…`) — is
+the cross-SKU comparison target. Its FWSEC IMEM is **bit-identical** to the
+4090's; only the display/memory firmware differs.
+
 ## Tools
 
 All read-only. Tested offline against the dumps; nothing in this table touches
@@ -75,6 +87,7 @@ future authorised run.
 | `tools/vbios_chain.py` | NVGI container + PCIR/NPDE image chain, hashes, extraction | ✅ both dumps |
 | `tools/efi_extract.py` | EFI expansion-ROM header, Tiano decompression, PE inventory, instruction-aware register scan | ✅ both dumps (identical PE) |
 | `tools/ucode_classify.py` | FALCON_UCODE table, V1/V2/V3 descriptors, per-image entropy/DMEM strings | ✅ both dumps |
+| `tools/cross_sku_compare.py` | Entry-by-entry firmware comparison between two dumps (IMEM/DMEM diffs) | ✅ 4090 vs 6000 and 4090 A vs B |
 | `tools/fwsec_extract.py` | FWSEC descriptor + image (port of the public module's parser) | ✅ |
 | `tools/static_evidence.py` | Recomputes every number quoted in `docs/05` | ✅ → `research/static_evidence.json` |
 | `tools/hw/capture_linux.py` | Read-only BAR0 capture from a driverless Linux environment | ✅ synthetic sysfs tree |

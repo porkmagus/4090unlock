@@ -286,6 +286,47 @@ locally; they are 3–4 KB past the speed-select fuses. **Role UNKNOWN**, but th
 is the first direct evidence that the ROM's own firmware reads SKU/fuse data,
 which is consistent with a hardware-derived policy model.
 
+### 3.5 Cross-SKU check: the same firmware runs on a professional AD102
+
+The repository now also holds an RTX 6000 Ada dump
+(`6000-vbios/254385.rom`, SHA-256 `394677dc316e6259…`, PCIR device `10DE:26B1`,
+VBIOS `95.02.59.00.09`). Same container layout, same `adjust = 0x14E00`, same
+seven populated ucode entries. Comparing entry by entry
+(`tools/cross_sku_compare.py`, output in `research/cross_sku_firmware.json`):
+
+| Entry | IMEM bytes (4090 / 6000) | IMEM diff | DMEM diff | Image |
+|---|---|---:|---:|---|
+| PRE_OS | 39,720 / 39,720 | **0** | 29 | different |
+| app `0x07` | 64,768 / 64,768 | **0** | **0** | **identical** |
+| LS_UDE | 62,224 / 62,260 | 30,369 | 5,534 | different |
+| FWSEC_DBG (`0x45`) | 62,720 / 62,720 | **0** | 33 | different |
+| FWSEC_PROD (`0x85`) | 62,720 / 62,720 | **0** | 33 | different |
+| app `0x09` DBG (`0x49`) | 22,528 / 22,528 | **0** | 33 | different |
+| app `0x09` PROD (`0x89`) | 22,528 / 22,528 | **0** | 33 | different |
+
+The FWSEC PROD **IMEM is byte-identical** on both cards —
+`5db588b90a2941202d7ac8fc910ee7dab17660a3695e32f244d13d73071ba232` — and so is
+the DMEM except for **33 bytes**:
+
+* offset `0x0A`: the low byte of the PCI device id (`0x84` → `0xB1`);
+* `0xAB4..0xAD3`: one 32-byte per-SKU binding value (not a plain SHA-256 of the
+  DMEM; no digest of any candidate span matched).
+
+The DSS/debug variants behave identically, and the GOP EFI image is also
+byte-identical across the two SKUs (`47a1f08b…`). **VERIFIED.**
+
+Interpretation, and it is a strong one: NVIDIA ships **one signed FWSEC binary**
+plus a small plaintext per-SKU DMEM parameter block. The IMEM ciphertext being
+identical means the same key, the same IV and the same plaintext; the signature
+lives in the descriptor and covers the IMEM, so the DMEM can be parameterised
+per board after signing.
+
+Consequence: **the ROM firmware is not the differentiator between a 4090 and an
+RTX 6000 Ada.** The only per-SKU differences in the security firmware are the
+device id and a 32-byte binding value. The parts that *do* differ (LS_UDE:
+30,369 bytes of IMEM, 5,534 of DMEM) are the display/memory firmware, which must
+differ — 24 GB GDDR6X versus 48 GB GDDR6 with different memory vendors.
+
 ---
 
 ## 4. Task C — the performance/silent delta

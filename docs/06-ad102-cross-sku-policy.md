@@ -159,28 +159,48 @@ independently reproduced here; no GPU was available.
 | Device / subsystem | `10DE:2684` / `1462:5103` | `10DE:26B1` / `10DE:16A1` | VERIFIED (dumps; NVIDIA supported-chips list, TPU 276178) |
 | VBIOS version | `95.02.3C.40.B9` (perf), `.B8` (silent) | `95.02.59.00.09` | VERIFIED / OBSERVED |
 | VBIOS image | 2,048,000 B NVGI container | 2,048,000 B (2000 KB reported) | VERIFIED / OBSERVED |
-| FWSEC app ids present | `0x45`, `0x85`, `0x49`, `0x89` | not obtained | VERIFIED / UNKNOWN |
-| FWSEC `0x85` SHA-256 (content) | `a9dbe61166d858be…` | not obtained | VERIFIED / UNKNOWN |
+| FWSEC app ids present | `0x45`, `0x85`, `0x49`, `0x89` | **the same four** | VERIFIED |
+| FWSEC `0x85` IMEM SHA-256 | `5db588b90a2941202d7ac8fc910ee7dab17660a3695e32f244d13d73071ba232` | **identical** | VERIFIED |
+| FWSEC `0x85` DMEM | 3,456 B | 3,456 B, **33 bytes differ** | VERIFIED |
+| GOP EFI image | `47a1f08b…` | **identical** | VERIFIED |
 | Board power limit | 450 W (480 W max) | 300 W (not raiseable) | VERIFIED / OBSERVED |
 
-The decisive firmware comparison — is the professional card's FWSEC byte-identical
-to the consumer card's — **could not be made**: TechPowerUp serves the RTX 6000
-Ada VBIOS page but blocks the `.rom` download from this host (HTTP 403 on the
-page scrape and on every direct download path tried), and no other trustworthy
-mirror was found. It is recorded as the cheapest follow-up in §7.
+The decisive firmware comparison was made with a second dump now in the repository
+(`6000-vbios/254385.rom`, RTX 6000 Ada, `10DE:26B1`, VBIOS `95.02.59.00.09`,
+SHA-256 `394677dc316e6259…`). `tools/cross_sku_compare.py` walks both ucode
+tables and compares every entry:
 
-What can be said without it:
+| Entry | IMEM, 4090 vs 6000 | IMEM diff | DMEM diff |
+|---|---|---:|---:|
+| FWSEC_PROD (`0x85`) | 62,720 / 62,720 | **0** | 33 |
+| FWSEC_DBG (`0x45`) | 62,720 / 62,720 | **0** | 33 |
+| app `0x09` PROD (`0x89`) | 22,528 / 22,528 | **0** | 33 |
+| app `0x09` DBG (`0x49`) | 22,528 / 22,528 | **0** | 33 |
+| PRE_OS (`0x01`) | 39,720 / 39,720 | **0** | 29 |
+| app `0x07` | 64,768 / 64,768 | **0** | **0** |
+| LS_UDE (`0x08`) | 62,224 / 62,260 | 30,369 | 5,534 |
 
-* The ROM side of this card contains **four signed descriptors** covering two
-  firmware applications in debug/production pairs (`docs/05` §3). Nothing in
-  them is SKU-specific in *structure*; the only SKU identity in the FWSEC DMEM
-  is the PCI device word `0x2684` at DMEM offset 8.
-* The VBIOS is **not** a rate table. It contains no speed-select write in any
+The FWSEC IMEM — the signed, encrypted part — is **byte-identical**, including
+its ciphertext (`5db588b9…`), and its DMEM differs in exactly **33 bytes**: the
+low byte of the PCI device id at `0x0A`, plus one 32-byte per-SKU binding value
+at `0xAB4..0xAD3`. The GOP EFI image is also byte-identical.
+
+So NVIDIA ships **one signed FWSEC binary plus a per-SKU plaintext parameter
+block**. The parts that differ (LS_UDE) are the display/memory firmware, which
+must differ between a 24 GB GDDR6X board and a 48 GB GDDR6 board.
+
+What follows:
+
+* The professional card's higher per-SM rate **cannot be produced by different
+  ROM firmware** — that firmware is bit-identical to the consumer card's.
+* It can still be produced by (a) per-SKU fuse/strap data that the same
+  firmware or the hardware reads, or (b) host-side software (GSP-RM is in the
+  driver package, not the VBIOS). The S0/pre-driver capture in `docs/07`
+  separates (a) from (b).
+* The VBIOS is **not** a rate table: it contains no speed-select write in any
   plaintext region, and the decompressed GOP driver reads the fuse block only
   for memory sizing.
-* Therefore, if the professional card's rate comes from its VBIOS at all, it
-  would have to come from inside encrypted FWSEC — and the same FWSEC is what
-  the 4090 runs. That is possible but has no supporting evidence.
+
 
 ---
 
@@ -219,28 +239,30 @@ What is established:
    rate.
 
 What is not established: whether the *default* state is loaded from OTP fuse
-words by hardware, or written by authenticated firmware that reads a SKU fuse.
+words by hardware, or written by host-side software (GSP-RM) that reads a SKU
+fuse. **ROM firmware is now excluded** — the FWSEC and app-`0x09` images are
+bit-identical between the two SKUs (§4).
 
 Weight of evidence:
 
 | Observation | Favours |
 |---|---|
+| FWSEC and app-`0x09` IMEM **bit-identical** on 4090 and RTX 6000 Ada; DMEM differs in 33 bytes | ROM firmware cannot be the differentiator — **VERIFIED exclusion** |
 | Effective readout at cold matches the fuse words field-for-field (3 reduced units ↔ 3 fuses at 1) | fuse-derived hardware default |
 | No plaintext firmware (legacy x86, GOP PE, PRE_OS, LS_UDE, app 0x07) writes or reads `0x8238xx` | fuse-derived |
 | Falcon firmware *does* read `0x0082xxxx` words (`0x821304`, `0x8215AC`) — the aperture is live at boot | neutral: proves firmware consumes fuse data, not that it sets the rate |
 | Two SKUs of the same die and clock differ 2× in a shipped product | a per-SKU configuration input exists; fuses are the conventional one |
-| FWSEC is encrypted; its side effects are unobservable | firmware-mediated seeding cannot be excluded |
+| GSP-RM lives in the driver package, not the VBIOS, and is SKU-aware | host-side seeding remains possible until an S0 capture is taken |
 
 **Best-supported conclusion:** the rate is a **hardware-configured default**
-(fuse/strap-programmed speed-select state), and the professional SKUs differ
-because their fuses are programmed differently. Firmware-mediated seeding
-remains **possible but unsupported**: it requires the same encrypted FWSEC to
-behave differently per SKU, and the only SKU identifier visible in that
-firmware's plaintext DMEM is the PCI device id.
+(fuse/strap-programmed speed-select state). The professional SKUs differ because
+their fuses are programmed differently; the ROM firmware they run is identical.
 
-Confidence: **INFERRED, high** for "configuration state rather than silicon";
-**INFERRED, medium** for "fuse rather than firmware"; **UNKNOWN** until a
-professional card is read.
+Confidence: **VERIFIED** for "configuration state rather than silicon";
+**VERIFIED** for "not the VBIOS/ROM firmware"; **INFERRED, medium-high** for
+"fuse rather than a strap or the GPU's own boot ROM"; **UNKNOWN** only for the
+host-side (GSP-RM) alternative, which the S0 capture in `docs/07` rules in or
+out.
 
 ---
 
@@ -250,10 +272,14 @@ Read `FUSE_SS_FMLA32` (`0x008207D8`) and `FEAT_READOUT_1` (`0x00823818`) on an
 **RTX 6000 Ada or L40**, cold, with no driver bound — using the read-only kit in
 `docs/07` (UEFI path or Linux live USB). Nothing is written.
 
+The same capture on **our own 4090** at S0 is the other half: if its readout is
+already reduced before any driver loads, the default is not host software, and
+the professional card's fuse words finish the argument.
+
 | Observation | Conclusion |
 |---|---|
 | `FUSE_SS_FMLA32 = 0` and readout fields all 0 | **Fuse origin confirmed.** The professional card's full rate is a fuse-programmed default; no firmware patch is needed to explain it, and the 4090's cap is OTP. |
-| `FUSE_SS_FMLA32 = 1` but readout is 0 and the card benchmarks at ~1024 FLOP/SM/clk | **Fuse origin refuted.** The rate is seeded by something other than that fuse word — most likely authenticated firmware or a strap — and the VBIOS/FWSEC path becomes the primary suspect. |
+| `FUSE_SS_FMLA32 = 1` but readout is 0 and the card benchmarks at ~1024 FLOP/SM/clk | **Fuse origin refuted.** The rate is seeded by something other than that fuse word — a strap, the GPU's own boot ROM, or host-side software (GSP-RM). ROM firmware is excluded (§4), so the VBIOS/FWSEC path is not a suspect. |
 | Fuses identical to the 4090 *and* readout identical (`0x00410080`) | The readout is not the effective rate; the whole decode in this document must be revised before any persistence plan proceeds. |
 
 The same capture also answers whether the professional card's `SS0`/`SS1`
@@ -267,8 +293,10 @@ differ from the consumer's, which bounds any "write the pro values" idea.
 |---|---|
 | RTX 4090 is 2× slower per SM per clock on FP32-accumulate tensor paths than RTX 6000 Ada | VERIFIED (both whitepapers) |
 | L40 and RTX 6000 Ada are the same die/clock and 2× apart on all tensor paths | VERIFIED (whitepaper tables), clock INFERRED from FP32 |
+| The FWSEC and app-`0x09` firmware images are **bit-identical** on 4090 and RTX 6000 Ada (DMEM differs in 33 bytes) | VERIFIED (`research/cross_sku_firmware.json`) |
+| The GOP EFI driver is byte-identical across the two SKUs | VERIFIED |
 | The 4090 reaches the professional per-clock rate after SS0/SS1 writes | OBSERVED (community measurements; 1.9–2.0× per clock) |
 | Cold readout fields 2/5/7 correspond to FMLA32/IMLA2/IMLA4 | INFERRED (fuse order + count match) |
-| The default rate is fuse-programmed rather than firmware-written | INFERRED, medium |
+| The default rate is fuse-programmed rather than set by ROM firmware | VERIFIED for the firmware half; INFERRED, medium-high for "fuse" specifically |
 | Professional AD102 fuse words differ from consumer | UNKNOWN — the experiment in §7 |
 | Sustained GEMM favours the 4090 despite the half rate (power limits) | OBSERVED (third-party) |
