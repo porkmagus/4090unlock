@@ -238,43 +238,57 @@ What is established:
 3. **It is not consumer-vs-professional** — L40 (professional) runs the consumer
    rate.
 
-What is not established: whether the *default* state is loaded from OTP fuse
-words by hardware, or written by host-side software (GSP-RM) that reads a SKU
-fuse. **ROM firmware is now excluded** — the FWSEC and app-`0x09` images are
-bit-identical between the two SKUs (§4).
+What is not established is only *which piece of hardware* reads the fuse: OTP,
+a strap, or the GPU's own boot ROM. Both software alternatives are now excluded:
+
+* **ROM firmware** — the FWSEC and app-`0x09` images are bit-identical between
+  the two SKUs (§4).
+* **Host software (GSP-RM)** — cold Ada cards with no driver bound already read
+  `FEAT_READOUT_1 = 0x00410080` with the consumer fuse tier programmed
+  (`docs/10` §2). GSP-RM is loaded by the host driver and was not running.
 
 Weight of evidence:
 
-| Observation | Favours |
-|---|---|
-| FWSEC and app-`0x09` IMEM **bit-identical** on 4090 and RTX 6000 Ada; DMEM differs in 33 bytes | ROM firmware cannot be the differentiator — **VERIFIED exclusion** |
-| Effective readout at cold matches the fuse words field-for-field (3 reduced units ↔ 3 fuses at 1) | fuse-derived hardware default |
-| No plaintext firmware (legacy x86, GOP PE, PRE_OS, LS_UDE, app 0x07) writes or reads `0x8238xx` | fuse-derived |
-| Falcon firmware *does* read `0x0082xxxx` words (`0x821304`, `0x8215AC`) — the aperture is live at boot | neutral: proves firmware consumes fuse data, not that it sets the rate |
-| Two SKUs of the same die and clock differ 2× in a shipped product | a per-SKU configuration input exists; fuses are the conventional one |
-| GSP-RM lives in the driver package, not the VBIOS, and is SKU-aware | host-side seeding remains possible until an S0 capture is taken |
+| Observation | Source | Favours |
+|---|---|---|
+| FWSEC and app-`0x09` IMEM **bit-identical** on 4090 and RTX 6000 Ada; DMEM differs in 33 bytes | our dumps, §4 | firmware excluded — **VERIFIED** |
+| Cold Ada, no driver: `FEAT_READOUT_1 = 0x00410080`, `FMLA32/IMLA2/IMLA4 = 1/1/1` | `docs/10` §2 | host software excluded — **OBSERVED** |
+| 15 Ampere cards: speed-select fuses `1` on **all** consumer GeForce, `0` on **all** professional/datacenter, `5` on CMP; readout `0` exactly where the fuses are `0` | `docs/10` §1 | fuse is the discriminator — **OBSERVED** |
+| NVIDIA's RM getter names `FMLA32/IMLA2/IMLA4` and they flip `1/1/1 → 0/0/0` | `docs/10` §4 | confirms the field mapping in §2.3 — **OBSERVED** |
+| Effective readout at cold matches the fuse words field-for-field | published cold capture | same conclusion, one card |
+| No plaintext firmware writes or reads `0x8238xx`; the only `0x0082xxxx` access is a memory-size read | `docs/05` §2.4, §3.4 | consistent |
+| Two SKUs of the same die and clock differ 2× in a shipped product | §2.4 | a per-SKU configuration input exists |
 
-**Best-supported conclusion:** the rate is a **hardware-configured default**
-(fuse/strap-programmed speed-select state). The professional SKUs differ because
-their fuses are programmed differently; the ROM firmware they run is identical.
+**Best-supported conclusion:** the rate is a **fuse-programmed, per-SKU hardware
+default**. The professional SKUs differ because their fuses are programmed
+differently; the ROM firmware they run is identical and no host driver is
+involved.
 
 Confidence: **VERIFIED** for "configuration state rather than silicon";
-**VERIFIED** for "not the VBIOS/ROM firmware"; **INFERRED, medium-high** for
-"fuse rather than a strap or the GPU's own boot ROM"; **UNKNOWN** only for the
-host-side (GSP-RM) alternative, which the S0 capture in `docs/07` rules in or
-out.
+**VERIFIED** for "not the VBIOS/ROM firmware"; **VERIFIED** for "not host
+software"; **OBSERVED on Ampere and inferred for Ada** that the discriminating
+input is the `FUSE_SS_*` speed-select tier (six professional parts at 0, nine
+consumer at 1). The Ada-professional cell is still unmeasured — a confirmation,
+not a discovery (`docs/10` §6).
 
 ---
 
-## 7. The one experiment that settles it
+## 7. The one measurement still outstanding
+
+**Status: this is now a confirmation, not a discovery.** The equivalent
+experiment has already been run in public on Ampere — 15 cards, speed-select
+fuses `1` on every consumer GeForce and `0` on every professional/datacenter
+part (`docs/10` §1) — and cold Ada consumer cards with no driver show the
+reduced readout with the consumer fuse tier (`docs/10` §2). What has never been
+measured is an **Ada professional** part.
 
 Read `FUSE_SS_FMLA32` (`0x008207D8`) and `FEAT_READOUT_1` (`0x00823818`) on an
 **RTX 6000 Ada or L40**, cold, with no driver bound — using the read-only kit in
-`docs/07` (UEFI path or Linux live USB). Nothing is written.
+`docs/07` (UEFI path or the existing public probe). Nothing is written.
 
-The same capture on **our own 4090** at S0 is the other half: if its readout is
-already reduced before any driver loads, the default is not host software, and
-the professional card's fuse words finish the argument.
+The same capture on **our own 4090** at S0 is the other half: it puts this
+specific board's cold state on record rather than relying on the three
+community 4090s, which were read post-driver.
 
 | Observation | Conclusion |
 |---|---|
